@@ -1,0 +1,21 @@
+header: 
+  seq: 0
+  stamp: 
+    secs: 0
+    nsecs: 0
+  frame_id: "husky1/camera_front/camera_color_optical_frame"
+height: 240
+width: 424
+distortion_model: ''
+D: []
+K: [367.2785339355469, 0.0, 212.0, 0.0, 367.2785339355469, 120.0, 0.0, 0.0, 1.0]
+R: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+P: [367.2785339355469, 0.0, 212.0, 0.0, 0.0, 367.2785339355469, 120.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+binning_x: 0
+binning_y: 0
+roi: 
+  x_offset: 0
+  y_offset: 0
+  height: 0
+  width: 0
+  do_rectify: False

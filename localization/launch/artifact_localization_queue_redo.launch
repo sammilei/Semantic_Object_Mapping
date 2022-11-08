@@ -1,0 +1,18 @@
+<launch>
+  <arg name="robot_namespace" default="robot"/>
+
+  <group ns="$(arg robot_namespace)">
+    <node name="artifact_localization" pkg="artifact_localization" type="artifact_localization_node" output="screen" respawn="true">
+      <rosparam file="$(find artifact_localization)/cfg/frames.yaml"/>
+      <rosparam file="$(find artifact_localization)/cfg/artifact_localization.yaml" />
+      <rosparam file="$(find artifact_localization)/cfg/$(arg robot_namespace)_camera_specs.yaml" />
+      <param name="robot_name" value="$(arg robot_namespace)"/>
+      <param name="tf_prefix" value="$(arg robot_namespace)"/>
+    </node>
+  </group>
+  <!-- <node pkg="tf" type="static_transform_publisher" name="map_base_link" args="0 0 0 0 0 0 1 $(arg robot_namespace)/map $(arg robot_namespace)/base_link 100" />
+  <node pkg="tf" type="static_transform_publisher" name="bl_cam_f" args="0 0 0 0 0 0 1 $(arg robot_namespace)/base_link camera_front/camera_color_optical_frame 100" />
+  <node pkg="tf" type="static_transform_publisher" name="bl_cam_r" args="0 0 0 0 0 0 1 $(arg robot_namespace)/base_link camera_right/camera_color_optical_frame 100" />
+  <node pkg="tf" type="static_transform_publisher" name="bl_cam_l" args="0 0 0 0 0 0 1 $(arg robot_namespace)/base_link camera_left/camera_color_optical_frame 100" /> -->
+  <!-- <rosparam param="use_sim_time">true</rosparam> -->
+</launch>

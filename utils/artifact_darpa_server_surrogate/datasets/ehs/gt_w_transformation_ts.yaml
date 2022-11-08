@@ -1,0 +1,16 @@
+# These values are in [X,Y,Z] format
+# NOT! NOT! NOT! in [N,E,Z] format on TS
+# The total station output is [N,E,Z]
+# Convert to [X,Y,Z] as such:
+  # X = E
+  # Y = N
+  # Z = Z
+
+gt:
+  '101': [-0.627, 2.341, 0.620]
+  '102': [-0.626, 1.875, 1.087]
+  '103': [-0.630, 1.403, 0.623]
+w:
+  '101': [0.0, 0.0, 0.0]
+  '102': [0.0, -0.471, 0.468]
+  '103': [0.0, -0.942, 0.0]

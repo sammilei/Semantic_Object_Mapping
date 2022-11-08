@@ -1,0 +1,3 @@
+include:
+  - project: naisr/core/core_environment
+    file: shared/ci/default-ci.yml

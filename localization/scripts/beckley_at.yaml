@@ -1,0 +1,45 @@
+session_name: beckley_at
+
+# Default environment variables; Overwrite from command line
+environment:
+  TEST_NAME: test
+  ROBOT_NAME: husky2
+  DATA_DIR: /home/costar/Data/beckley_at/trim
+  OPS_ENV: field
+
+options:
+  default-command: /bin/bash
+
+windows:
+- window_name: husky
+  layout: tiled
+  panes:
+    - roscore
+    - shell_command:
+      - sleep 4
+      - rosparam set use_sim_time true
+    # april tag detection
+    - shell_command:
+      - sleep 4
+      - roslaunch localizer_fiducial_calibration apriltag_detection.launch robot_namespace:=$ROBOT_NAME ops_env:=$OPS_ENV image_topic:=color/image_raw_throttle run:=true
+    # art loc
+    - shell_command:
+      - sleep 4
+      - roslaunch artifact_localization artifact_localization.launch robot_namespace:=$ROBOT_NAME ops_env:=$OPS_ENV 
+    # art rec
+    - shell_command:
+      - sleep 4
+      - roslaunch artifact_reconciliation artifact_reconciliation.launch robot_namespace:=$ROBOT_NAME
+    # rosbag play
+    - shell_command:
+      - sleep 4
+      - rosbag play $DATA_DIR/*.bag --clock --prefix=$ROBOT_NAME/ --pause
+    - shell_command:
+      - sleep 4
+      - roslaunch capability_ugv robot_state_publisher_husky.launch robot_namespace:=$ROBOT_NAME
+    - shell_command:
+      - sleep 4
+      - rosrun tf static_transform_publisher -2.0 0 0 0 0 0 $ROBOT_NAME/base_link $ROBOT_NAME/map 100
+    - shell_command:
+      - sleep 4
+      - rostopic echo /$ROBOT_NAME/artifact_localization/unreconciled_artifact/header

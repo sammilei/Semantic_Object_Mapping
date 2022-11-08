@@ -1,0 +1,32 @@
+subscribers:
+
+  camera_topics:
+    - boson/image_raw_throttle
+  queue_size: 10
+
+publishers:
+
+  object_detector:
+    topic: found_object
+    queue_size: 1
+    latch: false
+
+  bounding_boxes:
+    topic: bounding_boxes
+    queue_size: 1
+    latch: false
+
+  detection_image:
+    topic: detection_image
+    queue_size: 1
+    latch: true
+  
+  detection_depth:
+    topic: detection_depth
+    queue_size: 1
+    latch: true
+
+  detected_object:
+    topic: detected_object #subT added
+    queue_size: 10
+    latch: true

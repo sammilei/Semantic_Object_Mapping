@@ -1,0 +1,13 @@
+<launch>
+  <group ns="darpa">
+    <node pkg="darpa_server_surrogate" type="server.py" name="server" output="screen">
+      <param name="port" value="8000"/>
+      <param name="dataset_file" value="$(find darpa_server_surrogate)/tests/dataset.json"/>
+      <param name="token" value="subttesttoken123"/>
+    </node>
+  </group>
+
+  <test test-name="test_server"
+        pkg="darpa_server_surrogate"
+        type="test_scoring.py"/>
+</launch>

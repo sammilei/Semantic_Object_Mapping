@@ -1,0 +1,24 @@
+# Instructions
+# This contains the ground truth measurements based on the original survey of the Arroyo Parking Structure on 10/8/19
+# 100 is a test case to validate the transformation for a known dummy point
+
+# Data here in [X,Y,Z] format
+# in gt frame
+
+1CondCell: [39.99, 0, 0]
+1CondBP: [20.483, -10.729, 0]
+1CondVent: [10.729, -12.192, 1.4]
+1CondFX: [27.066, -14.996, 0]
+1ColSur: [8.839, -18.471, 0]
+1ColCell: [20.726, -29.2, 0]
+1ColGas1: [13.899, -34.747, 0]
+1ColGas2: [20.483, -42.062, 0]
+0ASur: [15.024, -3.359, -3.165]
+0AFX1: [6.919, -10.425, -2.665]
+0AFX2: [8.582, -2.528, -3.165]
+0BFX3: [17.31, -50.742, -2.665]
+0ABP: [38.923, -10.425, -3.165]
+0BDrill: [19.804, -20.4, -3.165]
+1FE1: [15.95, -15.25, 0.0]
+1FE2: [10.63, -10.99, 0.0]
+1FE3: [18.43, -43.59, 0.0]

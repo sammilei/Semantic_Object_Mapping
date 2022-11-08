@@ -1,0 +1,16 @@
+# Instructions
+# Set up artifacts and add their locations and categories on new rows
+# e.g. a backpack at marker 0 is written '0: Backpack'
+# Labels are case sensitive to match DARPA conventions
+# Choose from [Backpack, Fire Extinguisher, Cell Phone, Survivor, Drill] with '_n' as a suffix
+# This allows unique identification of them
+# e.g. 1: Backpack_2
+# If there is no artifact at a given location, it is not required to add an entry
+# 100: TEST is a dummy case used to validate the accuracy of the transformation script
+
+1: Backpack_1
+2: Backpack_2
+3: Backpack_3
+4: Backpack_4
+7: Fire Extinguisher_1
+# 100: TEST

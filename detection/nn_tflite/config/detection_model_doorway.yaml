@@ -1,0 +1,8 @@
+detection_model:
+  cpu_tflite_model:
+    file_name: no_CPU #Doorways_mobileDet_320x320_edgeTpu.tflite #Doorways_SDD_mobile640x640.tflite
+  edgetpu_tflite_model:
+    file_name: Doorways_mobileDet_320x320_edgeTpu.tflite #mobilenet_v1_1.0_224_quant_edgetpu.tflite #mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite #Doorways_SDD_mobile640x640_quant_edgetpu.tflite
+  classes_names:
+    file_name: Doorway_labels.txt #imagenet_labels.txt #inat_bird_labels.txt 
+  threshold: 0.5

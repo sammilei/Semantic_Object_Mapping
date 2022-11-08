@@ -1,0 +1,13 @@
+<launch>
+  <arg name="robot_namespace" default="robot"/>
+  <group ns="$(arg robot_namespace)">
+    <node name="bt_scanner" pkg="artifact_detection_rf" type="bt_scanner.py" output="screen" respawn="false"/>
+    <node name="wifi_scanner" pkg="artifact_detection_rf" type="wifi_scanner.py" output="screen" respawn="false" launch-prefix="bash -c 'sleep 4; $0 $@' "/>
+    <node name="prepare_interface" pkg="artifact_detection_rf" type="prepare_interface.py" output="screen" respawn="false"/>
+    <rosparam command="load" file="$(find artifact_detection_rf)/cfg/artifact_detection_rf.yaml" />
+  </group>
+
+  <include file="$(find artifact_detection_rf)/launch/key_value.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+  </include>
+</launch>

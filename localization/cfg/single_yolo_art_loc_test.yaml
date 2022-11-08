@@ -1,0 +1,55 @@
+session_name: static_tfs
+
+options:
+  default-command: /bin/bash
+
+windows:
+- window_name: the_goods
+  layout: tiled
+  panes:
+    - roscore
+    - shell_command:
+      - sleep 11
+      - rosbag play ~/Data/husky2_2019-07-28-19-10-00_test/all.bag --clock --pause
+    - shell_command:
+      - sleep 11
+      - roslaunch artifact_localization artifact_localization.launch robot_namespace:=husky2
+    - shell_command:
+      - sleep 11
+      # - roslaunch darknet_ros yolo_v3_tiny_all_in_one.launch robot_namespace:=husky2
+    - shell_command:
+      - sleep 11
+      - rosparam set use_sim_time true
+    - clear
+
+- window_name: static_tfs
+  layout: tiled
+  panes:
+    - shell_command:
+      - sleep 11
+      - rosrun tf static_transform_publisher 0 0 0 0 0 0 /husky2/base_link /husky2/map 100
+    - shell_command:
+      - sleep 11
+      - roslaunch capability_ugv robot_state_publisher_husky.launch robot_namespace:=husky2
+
+- window_name: image_seq
+  layout: tiled
+  panes:
+    - shell_command:
+      - sleep 11
+      - rostopic echo /husky2/camera_front/color/image_raw/header
+    - shell_command:
+      - sleep 11
+      - rostopic echo /husky2/camera_front/aligned_depth_to_color/image_raw/header
+    - shell_command:
+      - sleep 11
+      - rostopic echo /husky2/camera_left/color/image_raw/header
+    - shell_command:
+      - sleep 11
+      - rostopic echo /husky2/camera_left/aligned_depth_to_color/image_raw/header
+    - shell_command:
+      - sleep 11
+      - rostopic echo /husky2/camera_right/color/image_raw/header
+    - shell_command:
+      - sleep 11
+      - rostopic echo /husky2/camera_right/aligned_depth_to_color/image_raw/header            

@@ -1,0 +1,1 @@
+detection/nn_trt/yolov5_trt/trt_ros/network_config/pruned_768_int8.engine filter=lfs diff=lfs merge=lfs -text

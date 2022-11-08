@@ -1,0 +1,9 @@
+<launch>
+  <arg name="robot_namespace" default="robot"/>
+  <arg name="pose_graph_source" default="base1"/>
+  <group ns="$(arg robot_namespace)">
+    <node name="visualize_rssi_markers" pkg="artifact_detection_rf" type="visualize_rssi_markers.py" output="screen">
+      <remap from="pose_graph" to="/$(arg pose_graph_source)/lamp/pose_graph"/>
+    </node>
+  </group>
+</launch>

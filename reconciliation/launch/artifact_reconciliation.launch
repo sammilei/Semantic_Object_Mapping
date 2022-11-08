@@ -1,0 +1,16 @@
+<launch>
+  <arg name="robot_namespace" default="base1"/>
+  <arg name="sim" default="false"/>
+
+  <group ns="$(arg robot_namespace)">
+
+    <node name="artifact_reconciliation" pkg="artifact_reconciliation" type="artifact_reconciliation_node" output="screen">
+      <rosparam command="load" file="$(find artifact_reconciliation)/cfg/artifact_reconciliation.yaml" />
+    </node>
+
+    <node name="get_netvlad_desc_server" pkg="artifact_reconciliation" type="get_netvlad_desc_server.py" output="screen">
+      <rosparam command="load" file="$(find artifact_reconciliation)/cfg/artifact_reconciliation.yaml" />
+    </node>
+
+  </group>
+</launch>

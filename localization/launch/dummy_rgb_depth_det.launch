@@ -1,0 +1,10 @@
+<launch>
+  <arg name="robot_namespace" default="husky3"/>
+
+  <group ns="$(arg robot_namespace)">
+    <node name="dummy_rgb_depth_det" pkg="artifact_localization" type="dummy_rgb_depth_det.py" output="screen">
+    </node>
+      <rosparam file="$(find artifact_localization)/cfg/$(arg robot_namespace)_camera_specs.yaml" />
+  </group>
+
+</launch>

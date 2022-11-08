@@ -1,0 +1,5 @@
+<launch>
+  <test test-name="test_artifact"
+        pkg="artifact_localization"
+        type="test_artifact"/>
+</launch>

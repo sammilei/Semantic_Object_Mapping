@@ -1,0 +1,35 @@
+color_filter:
+
+  subscribers:
+    rgb_full_detection_topic: detected_object_raw
+    thermal_full_detection_topic: thermal/detected_object_raw
+
+  publishers:
+    rgb_detection_topic: detected_object
+    thermal_detection_topic: thermal/detected_object
+
+  cameras: # not used
+    - camera_front
+    - camera_right
+    - camera_left
+
+  filter_thresh:
+    BLUE_HSV_LOWER: [85, 75, 15]
+    BLUE_HSV_UPPER: [115, 255, 255]
+
+    RED_HSV_LOWER_BACKPACK: [130, 140, 3]
+    RED_HSV_UPPER_BACKPACK: [10, 255, 255]
+
+    RED_HSV_LOWER_FIRE: [160, 75, 20]
+    RED_HSV_UPPER_FIRE: [5, 255, 255]
+
+    RED_HSV_LOWER_DRILL: [150, 75, 30]
+    RED_HSV_UPPER_DRILL: [20, 255, 255]
+
+    MIN_H: 5
+    MIN_W: 4
+
+  debug_features: # features used during development - should be off for tests
+    save_path: /data/ros/filters_debug
+    draw_and_save: false # yes or no
+

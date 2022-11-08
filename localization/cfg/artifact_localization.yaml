@@ -1,0 +1,142 @@
+# Detection modality
+rgb:
+  cameras:
+    - 'camera_front'
+    - 'camera_right'
+    - 'camera_left'
+    - 'camera_rear'
+    - 'camera_up'
+  image_topic: color/image_decompress
+#  image_topic: color/image_raw_throttle # for debugging
+  info_topic: color/image_raw/lowres/camera_info
+  detection_topic: detected_object
+  frame: camera_color_optical_frame
+  cache_size: 100
+  sync_tolerance: 0.5
+depth:
+  cameras:
+    - 'camera_front'
+    - 'camera_right'
+    - 'camera_left'
+    - 'camera_rear'
+    - 'camera_up'
+  image_topic: aligned_depth_to_color/image_decompress
+#  image_topic: aligned_depth_to_color/image_raw_throttle # for debugging
+  info_topic: aligned_depth_to_color/camera_info
+  cache_size: 100
+  sync_tolerance: 0.5
+thermal:
+  cameras:
+    - 'boson'
+  image_topic: image_decompress
+  info_topic: camera_info
+  detection_topic: thermal/detected_object
+  cache_size: 100
+  sync_tolerance: 0.5
+lidar:
+  scan_topic: traversability/raw_points  # See also launch file for topic override # velodyne_points
+wifi:
+  detection_topic: wifi_rssi
+  strength_min: -60
+  strength_max: -20
+  confidence_min: 0.75
+  confidence_max: 1.0
+  range_sigma_coeff0: -15.0  # range_sigma = coeff0 + coeff1 * strength
+  range_sigma_coeff1: -1.0
+bluetooth:
+  detection_topic: bt_rssi
+  strength_min: -110
+  strength_max: -20
+  confidence_min: 0.75
+  confidence_max: 1.0
+  range_sigma_coeff0: 5  # range_sigma = coeff0 + coeff1 * strength
+  range_sigma_coeff1: 0
+gas:
+  detection_topic: co2_disabled
+  strength_min: 600
+  strength_max: 1000 # final competition max is 1500ppm
+
+# Artifacts
+artifacts:
+  types:
+    - survivor
+    - backpack
+    - cell_phone
+    - cube
+    - fire_extinguisher
+    - drill
+    - vent
+    - gas
+    - rope
+    - helmet
+  survivor:
+    name: 'Survivor'
+    abbreviation: su
+    scorability:
+      min_num_observations: 7
+  backpack:
+    name: 'Backpack'
+    abbreviation: bp
+    scorability:
+      min_num_observations: 7
+  cell_phone:
+    name: 'Cell Phone'
+    abbreviation: cp
+    min_num_observations: 20
+    scorability:
+      min_num_observations: 0
+  cube:
+    name: 'Cube'
+    abbreviation: cu
+    min_num_observations: 4 #signal
+    scorability:
+      min_num_observations: 3 #visual
+  fire_extinguisher:
+    name: 'Fire Extinguisher'
+    abbreviation: fe
+    scorability:
+      min_num_observations: 7
+  drill:
+    name: 'Drill'
+    abbreviation: dr
+    min_num_observations: 4 # otherwise too many false positives by orange light in the environment
+    scorability:
+      min_num_observations: 7
+  vent:
+    name: 'Vent'
+    abbreviation: ve
+    scorability:
+      min_num_observations: 0
+  gas:
+    name: 'Gas'
+    abbreviation: gs
+    min_num_observations: 20
+    scorability:
+      min_num_observations: 0
+  rope:
+    name: 'Rope'
+    abbreviation: ro
+    scorability:
+      min_num_observations: 7
+  helmet:
+    name: 'Helmet'
+    abbreviation: he
+    scorability:
+      min_num_observations: 7
+
+# Frames
+frames:
+  base_link_frame: $(arg robot_namespace)/base_link
+  map_frame: $(arg robot_namespace)/map
+  odom_frame: $(arg robot_namespace)/odom
+
+# Algorithms
+estimation_method: batch_optimization  # {batch_optimization, kalman, msl_raptor}
+depth_method: lidar # {image, lidar}
+
+# Misc
+robot_name: $(arg robot_namespace)
+debug_dir: '' # {'': disable debug image file output, '/tmp': write debug image files to /tmp}
+debug_topic: '' # {'': disable debug image pub, 'debug': publish debug images to /robot/camera_x/debug/}
+debug_topic_queue_size: 1
+debug_topic_latch: false

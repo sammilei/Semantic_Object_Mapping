@@ -1,0 +1,20 @@
+<launch>
+
+  <arg name="port" default="8080"/>
+  <arg name="token" default="subttesttoken123"/>
+  <arg name="dataset_file" default="$(find darpa_server_surrogate)/datasets/$(optenv ARTIFACT_DATASET ky_underground)/gt.json"/>
+
+  <group ns="darpa">
+    <node pkg="darpa_server_surrogate" type="server.py" name="server" output="screen">
+          <param name="port" value="$(arg port)"/>
+          <param name="token" value="$(arg token)"/>
+          <param name="dataset_file" value="$(arg dataset_file)"/>
+    </node>
+  </group>
+
+  <include file="$(find visualizer_artifacts)/launch/visualizer_artifacts_node.launch">
+    <arg name="robot_namespace" value="darpa"/>
+    <arg name="path_json_file" value="$(arg dataset_file)"/>
+  </include>
+
+</launch>

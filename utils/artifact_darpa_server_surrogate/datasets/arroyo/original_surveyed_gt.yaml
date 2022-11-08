@@ -1,0 +1,18 @@
+# Instructions
+# This contains the ground truth measurements based on the original survey of the Arroyo Parking Structure on 10/8/19
+# 100 is a test case to validate the transformation for a known dummy point
+
+# Data here in [X,Y,Z] format
+# in gt frame
+
+0: [0.000, 12.894, 2.207]
+1: [31.386, -27.967, -0.869]
+2: [-14.475, -23.344, 0.308]
+3: [-42.892, -19.984, -0.263]
+4: [-60.941, -17.665, 0.396]
+5: [-128.004, 8.465, -2.044]
+6: [-120.465, 26.496, -1.893]
+7: [-66.307, 20.294, -0.787]
+8: [69.949, -0.149, 1.943]
+9: [69.263, -14.459, 1.346]
+# 100: [7.0, 5.0, 0.5]

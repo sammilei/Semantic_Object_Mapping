@@ -1,0 +1,18 @@
+# Instructions
+# Set up artifacts and add their locations and categories on new rows
+# e.g. a backpack at marker 0 is written '0: Backpack'
+# Labels are case sensitive to match DARPA conventions
+# Choose from [Backpack, Fire Extinguisher, Cell Phone, Survivor, Drill] with '_n' as a suffix
+# This allows unique identification of them
+# e.g. 1: Backpack_2
+# If there is no artifact at a given location, it is not required to add an entry
+
+1CondCell: Cell Phone_1
+1CondBP: Backpack_1
+1CondVent: Vent_1
+1ColSur: Survivor_1
+1ColCell: Cell Phone_2
+1ColGas1: Gas_1
+1ColGas2: Gas_2
+0ASur: Survivor_2
+0ABP: Backpack_2

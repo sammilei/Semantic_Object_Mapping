@@ -1,0 +1,26 @@
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="robot_namespace" default="rollo"/>
+  <arg name="debug" default="false"/>
+  <arg name="launch_prefix" value="gdb -ex run --args" if="$(arg debug)"/>
+  <arg name="launch_prefix" value="" unless="$(arg debug)"/>
+
+  <group ns="$(arg robot_namespace)">
+    <!-- Config and weights folder. -->
+    <arg name="trt_ros"          default="$(find trt_ros)/"/>
+
+    <!-- ROS and network parameter files -->
+    <arg name="ros_param_file"             default="$(find trt_ros)/config/thermal.yaml"/>
+    <arg name="network_param_file"         default="$(find trt_ros)/config/detection_model_thermal.yaml"/>
+
+    <!-- Load parameters -->
+    <rosparam command="load" ns="trt_ros_thermal" file="$(arg ros_param_file)"/>
+    <rosparam command="load" ns="trt_ros_thermal" file="$(arg network_param_file)"/>
+
+    <!-- Start darknet and ros wrapper -->
+   <node name="trt_ros_thermal" pkg="trt_ros" type="detect.py" output="screen" launch-prefix="$(arg launch_prefix)">
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+  </group>
+ <!--<node name="republish" type="republish" pkg="image_transport" output="screen" 	args="compressed in:=/front_camera/image_raw raw out:=/camera/image_raw" /> -->
+</launch>

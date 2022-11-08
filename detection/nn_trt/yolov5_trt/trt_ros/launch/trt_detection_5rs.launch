@@ -1,0 +1,95 @@
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="robot_namespace" default="rollo"/>
+  <arg name="debug" default="false"/>
+  <arg name="launch_prefix" value="gdb -ex run --args" if="$(arg debug)"/>
+  <arg name="launch_prefix" value="" unless="$(arg debug)"/>
+
+  <arg name="trt_ros_front" default="trt_ros_front"/>
+  <arg name="trt_ros_left" default="trt_ros_left"/>
+  <arg name="trt_ros_right" default="trt_ros_right"/>
+  <arg name="trt_ros_up" default="trt_ros_up"/>
+  <arg name="trt_ros_rear" default="trt_ros_rear"/>
+
+
+  <group ns="$(arg robot_namespace)">
+    <!-- Config and weights folder. -->
+    <arg name="trt_ros"          default="$(find trt_ros)/"/>
+
+    <!-- ROS and network parameter files -->
+    <arg name="ros_param_file_front"             default="$(find trt_ros)/config/rs_front.yaml"/>
+    <arg name="ros_param_file_left"             default="$(find trt_ros)/config/rs_left.yaml"/>
+    <arg name="ros_param_file_right"             default="$(find trt_ros)/config/rs_right.yaml"/>
+    <arg name="ros_param_file_up"             default="$(find trt_ros)/config/rs_up.yaml"/>
+    <arg name="ros_param_file_rear"             default="$(find trt_ros)/config/rs_rear.yaml"/>
+    <arg name="network_param_file"         default="$(find trt_ros)/config/detection_model_rs.yaml"/>
+
+    <group ns="$(arg trt_ros_front)">
+      <!-- Load parameters -->
+      <rosparam command="load" file="$(arg ros_param_file_front)"/>
+      <rosparam command="load" file="$(arg network_param_file)"/>
+    </group>
+      <!-- Start darknet and ros wrapper -->
+    <node pkg="trt_ros"
+        name="$(arg trt_ros_front)"
+        type="detect.py" 
+        output="screen" 
+        launch-prefix="$(arg launch_prefix)">
+        <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+    <group ns="$(arg trt_ros_left)"> 
+     <!-- Load parameters -->
+      <rosparam command="load" file="$(arg ros_param_file_left)"/>
+      <rosparam command="load" file="$(arg network_param_file)"/>
+    </group>
+      <!-- Start darknet and ros wrapper -->
+    <node pkg="trt_ros"
+        name="$(arg trt_ros_left)"
+        type="detect.py" 
+        output="screen" 
+        launch-prefix="$(arg launch_prefix)">
+        <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+    <group ns="$(arg trt_ros_right)">
+      <!-- Load parameters -->
+      <rosparam command="load" file="$(arg ros_param_file_right)"/>
+      <rosparam command="load" file="$(arg network_param_file)"/>
+    </group>
+      <!-- Start darknet and ros wrapper -->
+    <node pkg="trt_ros"
+        name="$(arg trt_ros_right)"
+        type="detect.py" 
+        output="screen" 
+        launch-prefix="$(arg launch_prefix)">
+        <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+    <group ns="$(arg trt_ros_rear)">
+      <!-- Load parameters -->
+      <rosparam command="load" file="$(arg ros_param_file_rear)"/>
+      <rosparam command="load" file="$(arg network_param_file)"/>
+    </group>
+      <!-- Start darknet and ros wrapper -->
+    <node pkg="trt_ros"
+        name="$(arg trt_ros_rear)"
+        type="detect.py" 
+        output="screen" 
+        launch-prefix="$(arg launch_prefix)">
+        <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+ 
+    <group ns="$(arg trt_ros_up)">
+      <!-- Load parameters -->
+      <rosparam command="load" file="$(arg ros_param_file_up)"/>
+      <rosparam command="load" file="$(arg network_param_file)"/>
+    </group>
+      <!-- Start darknet and ros wrapper -->
+    <node pkg="trt_ros"
+        name="$(arg trt_ros_up)"
+        type="detect.py" 
+        output="screen" 
+        launch-prefix="$(arg launch_prefix)">
+        <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+  </group>
+ 
+</launch>

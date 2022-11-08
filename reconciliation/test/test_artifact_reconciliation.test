@@ -1,0 +1,12 @@
+<launch>
+  <node name="get_netvlad_desc_server" pkg="artifact_reconciliation" type="get_netvlad_desc_server.py" output="screen">
+    <rosparam command="load" file="$(find artifact_reconciliation)/cfg/artifact_reconciliation.yaml" />
+  </node>
+  
+  <node name="dummy_redetect_server" pkg="artifact_reconciliation" type="fake_redetect_service.py" output="screen"/>
+
+  <test test-name="test_artifact_reconciliation"
+        pkg="artifact_reconciliation"
+        type="test_artifact_reconciliation"
+        time-limit="100.0"/>
+</launch>

@@ -1,0 +1,14 @@
+yolo_trt_model:
+  serialized_file:
+    name: thermal_sep10.engine
+  detection_classes:
+    names:
+      - Vent
+      - Survivor
+  detect_thresh:
+    value: 
+      - 0.65
+      - 0.5
+  IoU_thresh:
+    value: 0.4
+

@@ -1,0 +1,13 @@
+# Param 3
+co2_detection:
+  dynamic_window_size: 100
+  ratio_1: 1.1 # = dynamic_threshold_min_ / mean_strength
+  ratio_2: 2.0 # = dynamic_threshold_max_ / dynamic_threshold_min_
+  variance_penalty: 3.0
+
+# Param 2
+# co2_detection:
+#   dynamic_window_size: 100
+#   ratio_1: 1.2 # = dynamic_threshold_min_ / mean_strength
+#   ratio_2: 2.0 # = dynamic_threshold_max_ / dynamic_threshold_min_
+#   variance_penalty: 1.0

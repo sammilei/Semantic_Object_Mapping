@@ -1,0 +1,93 @@
+<launch>
+  <arg name="robot_namespace" default="robot"/>
+  <arg name="tiny_network_base" default="true"/>
+
+  <param name="use_sim_time" value="true"/>
+
+  <!-- Base Station -->
+  <include file="$(find dashboard)/tests/test_artifact.launch">
+    <arg name="tiny_network_base" value="$(arg tiny_network_base)"/>
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+  </include>
+
+  <!-- Artifact Detection -->
+  <include file="$(find darknet_ros)/launch/darknet_ros.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <!-- <remap from="camera_front/color/image_raw" to="camera_front/color/image_raw_throttle"/>
+    <remap from="camera_right/color/image_raw" to="camera_right/color/image_raw_throttle"/>
+    <remap from="camera_left/color/image_raw" to="camera_left/color/image_raw_throttle"/> -->
+  </include>
+  <rosparam ns="$(arg robot_namespace)">
+    # Remap image topics
+    darknet_ros_front:
+      subscribers:
+        camera_reading:
+            topic: camera_front/color/image_raw_throttle
+    darknet_ros_right:
+      subscribers:
+        camera_reading:
+            topic: camera_right/color/image_raw_throttle
+    darknet_ros_left:
+      subscribers:
+        camera_reading:
+            topic: camera_left/color/image_raw_throttle
+  </rosparam>
+
+  <!-- Artifact localization -->
+  <include file="$(find artifact_localization)/launch/artifact_localization.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+  </include>
+  <rosparam ns="$(arg robot_namespace)">
+    artifact_localization:
+      # Remap image topics
+      rgb:
+        image_topic: color/image_raw_throttle
+      depth:
+        image_topic: aligned_depth_to_color/image_raw_throttle
+  </rosparam>
+
+  <!-- TF -->
+  <include file="$(find capability_common)/launch/robot_state_publisher.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+  </include>
+
+  <!-- Image decomporessor -->
+  <include file="$(find sensor_image_utils)/launch/rs_compressed_to_raw.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="camera_name" value="camera_front"/>
+    <arg name="throttle" value="true"/>
+    <arg name="image_in" value="image_raw"/>
+    <arg name="image_out" value="image_raw"/>
+  </include>
+
+  <include file="$(find sensor_image_utils)/launch/rs_compressed_to_raw.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="camera_name" value="camera_left"/>
+    <arg name="throttle" value="true"/>
+    <arg name="image_in" value="image_raw"/>
+    <arg name="image_out" value="image_raw"/>
+  </include>
+
+  <include file="$(find sensor_image_utils)/launch/rs_compressed_to_raw.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="camera_name" value="camera_right"/>
+    <arg name="throttle" value="true"/>
+    <arg name="image_in" value="image_raw"/>
+    <arg name="image_out" value="image_raw"/>
+  </include>
+
+  <!-- Visualization -->
+  <node pkg="rviz"
+        type="rviz"
+        name="rviz"
+        args="-d $(dirname)/rerun_artifact_$(arg robot_namespace).rviz"
+        ns="$(arg robot_namespace)"/>
+
+  <!-- Evaluation -->
+  <node pkg="artifact_detection_evaluation" type="detection_report_create.py"
+        name="detection_report_creater" >
+    <param name="robot_name" value="$(arg robot_namespace)" />
+    <param name="config_file" value="$(find artifact_detection_evaluation)/config/detection_report_create.yaml" />
+  </node>
+
+</launch>

@@ -1,0 +1,31 @@
+<launch>
+  <arg name="robot_namespace" default=""/>
+  <arg name="node_name" default="publish_dummy_artifact_detection"/>
+  <arg name="artifact" default="Cube"/>
+  <arg name="topic" default="bt_rssi"/>
+  <arg name="type" default="artifact_msgs/PointSourceDetection"/>
+  <arg name="frame" default="world"/>
+  <arg name="rate" default="10"/>
+  <!-- Args used by artifact_msgs/PointSourceDetection type -->
+  <arg name="signal_strength" default="-39.0"/>
+  <!-- Args used by darknet_ros_msgs/Object type -->
+  <arg name="bounding_box" default="100 100 200 200"/>
+  <arg name="probability" default="1.0"/>
+  <arg name="yolo_probability" default="1.0"/>
+  <arg name="color_score" default="1.0"/>
+  <arg name="camera_name" default="camera_front"/>
+
+  <node pkg="artifact_localization"
+        type="publish_dummy_artifact_detection.py"
+        name="$(arg node_name)"
+        args="-a $(arg artifact) -to $(arg topic) -ty $(arg type) -f $(arg frame) -r $(arg rate) -s $(arg signal_strength) -bb $(arg bounding_box) -p $(arg probability) -yp $(arg yolo_probability) -cs $(arg color_score) -cn $(arg camera_name)"
+        ns="$(arg robot_namespace)"
+        if="$(eval arg('robot_namespace') != '')"/>
+
+  <node pkg="artifact_localization"
+        type="publish_dummy_artifact_detection.py"
+        name="$(arg node_name)"
+        args="-a $(arg artifact) -to $(arg topic) -ty $(arg type) -f $(arg frame) -r $(arg rate) -s $(arg signal_strength) -bb $(arg bounding_box) -p $(arg probability) -yp $(arg yolo_probability) -cs $(arg color_score) -cn $(arg camera_name)"
+        unless="$(eval arg('robot_namespace') != '')"/>
+
+</launch>

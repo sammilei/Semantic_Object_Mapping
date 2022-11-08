@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<launch>
+  <!-- Console launch prefix -->
+  <!---->
+  <arg name="robot_namespace" default="robot" />
+  <arg name="machine" default="localhost" />
+  <arg name="launch_prefix" default="" />
+  <group ns="$(arg robot_namespace)">
+    <!-- Config and weights folder. -->
+    <arg name="tflite_weights_path"          default="$(find artifact_detection_nn_tflite)/network_config/tflite"/>
+    <arg name="classes_list_path"           default="$(find artifact_detection_nn_tflite)/network_config/classes"/>
+
+    <!-- ROS and network parameter files -->
+    <arg name="ros_param_file_front" default="$(find artifact_detection_nn_tflite)/config/ros_front.yaml" />
+    <arg name="ros_param_file_left" default="$(find artifact_detection_nn_tflite)/config/ros_left.yaml" />
+    <arg name="ros_param_file_right" default="$(find artifact_detection_nn_tflite)/config/ros_right.yaml" />
+    <arg name="ros_param_file_up" default="$(find artifact_detection_nn_tflite)/config/ros_up.yaml" />
+    <arg name="ros_param_file_rear" default="$(find artifact_detection_nn_tflite)/config/ros_rear.yaml" />
+    <arg name="network_param_file"  default="$(find artifact_detection_nn_tflite)/config/detection_model.yaml"/>
+
+    <!-- Load parameters -->
+    <rosparam command="load" ns="edgetpu_detection_front" file="$(arg ros_param_file_front)" />
+    <rosparam command="load" ns="edgetpu_detection_front" file="$(arg network_param_file)" />
+    <rosparam command="load" ns="edgetpu_detection_left" file="$(arg ros_param_file_left)" />
+    <rosparam command="load" ns="edgetpu_detection_left" file="$(arg network_param_file)" />
+    <rosparam command="load" ns="edgetpu_detection_right" file="$(arg ros_param_file_right)" />
+    <rosparam command="load" ns="edgetpu_detection_right" file="$(arg network_param_file)" />
+    <rosparam command="load" ns="edgetpu_detection_up" file="$(arg ros_param_file_up)" />
+    <rosparam command="load" ns="edgetpu_detection_up" file="$(arg network_param_file)" />
+    <rosparam command="load" ns="edgetpu_detection_rear" file="$(arg ros_param_file_rear)" />
+    <rosparam command="load" ns="edgetpu_detection_rear" file="$(arg network_param_file)" />
+
+    <!-- ros wrapper -->
+    <node pkg="artifact_detection_nn_tflite" type="edgetpu_detection_node" name="edgetpu_detection_front" output="screen" launch-prefix="$(arg launch_prefix)" respawn="false">
+      <param name="weights_path"          value="$(arg tflite_weights_path)" />
+      <param name="config_path"           value="$(arg classes_list_path)" />
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+      <param name="camera_name"           value="camera_front" />
+    </node>
+
+    <node pkg="artifact_detection_nn_tflite" type="edgetpu_detection_node" name="edgetpu_detection_left" output="screen" launch-prefix="$(arg launch_prefix)" respawn="false">
+     <param name="weights_path"           value="$(arg tflite_weights_path)" />
+      <param name="config_path"           value="$(arg classes_list_path)" />
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+      <param name="camera_name"           value="camera_left" />
+    </node>
+
+    <node pkg="artifact_detection_nn_tflite" type="edgetpu_detection_node" name="edgetpu_detection_right" output="screen" launch-prefix="$(arg launch_prefix)" respawn="false">
+      <param name="weights_path"          value="$(arg tflite_weights_path)" />
+      <param name="config_path"           value="$(arg classes_list_path)" />
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+      <param name="camera_name"           value="camera_right" />
+    </node>
+    
+    <node pkg="artifact_detection_nn_tflite" type="edgetpu_detection_node" name="edgetpu_detection_up" output="screen" launch-prefix="$(arg launch_prefix)" respawn="false">
+      <param name="weights_path"          value="$(arg tflite_weights_path)" />
+      <param name="config_path"           value="$(arg classes_list_path)" />
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+      <param name="camera_name"           value="camera_up" />
+    </node>
+    
+    <node pkg="artifact_detection_nn_tflite" type="edgetpu_detection_node" name="edgetpu_detection_rear" output="screen" launch-prefix="$(arg launch_prefix)" respawn="false">
+      <param name="weights_path"          value="$(arg tflite_weights_path)" />
+      <param name="config_path"           value="$(arg classes_list_path)" />
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+      <param name="camera_name"           value="camera_rear" />
+    </node>
+  </group>
+</launch>

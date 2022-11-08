@@ -1,0 +1,29 @@
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="robot_namespace" default="rollo"/>
+  <arg name="debug" default="false"/>
+  <arg name="launch_prefix" value="gdb -ex run --args" if="$(arg debug)"/>
+  <arg name="launch_prefix" value="" unless="$(arg debug)"/>
+
+  <group ns="$(arg robot_namespace)">
+    <!-- Config and weights folder. -->
+    <arg name="tflite_weights_path"          default="$(find artifact_detection_nn_tflite)/network_config/tflite"/>
+    <arg name="classes_list_path"           default="$(find artifact_detection_nn_tflite)/network_config/classes"/>
+
+    <!-- ROS and network parameter files -->
+    <arg name="ros_param_file"             default="$(find artifact_detection_nn_tflite)/config/ros_all_in_one.yaml"/>
+    <arg name="network_param_file"         default="$(find artifact_detection_nn_tflite)/config/detection_model.yaml"/>
+
+    <!-- Load parameters -->
+    <rosparam command="load" ns="edgetpu_detection" file="$(arg ros_param_file)"/>
+    <rosparam command="load" ns="edgetpu_detection" file="$(arg network_param_file)"/>
+
+    <!-- Start darknet and ros wrapper -->
+    <node pkg="artifact_detection_nn_tflite" type="edgetpu_detection_node" name="edgetpu_detection" output="screen" launch-prefix="$(arg launch_prefix)" respawn="false">
+      <param name="weights_path"          value="$(arg tflite_weights_path)" />
+      <param name="config_path"           value="$(arg classes_list_path)" />
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+  </group>
+ <!--<node name="republish" type="republish" pkg="image_transport" output="screen" 	args="compressed in:=/front_camera/image_raw raw out:=/camera/image_raw" /> -->
+</launch>

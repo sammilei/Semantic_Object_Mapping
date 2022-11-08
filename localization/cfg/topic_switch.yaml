@@ -1,0 +1,4 @@
+camera_front_depth: true
+camera_right_depth: true
+camera_left_depth: true
+velodyne: false

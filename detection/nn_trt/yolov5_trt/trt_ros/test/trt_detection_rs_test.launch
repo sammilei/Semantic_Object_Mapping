@@ -1,0 +1,74 @@
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="robot_namespace" default="rollo"/>
+  <arg name="debug" default="false"/>
+  <arg name="use_color_filter" default="true"/>
+  <arg name="launch_prefix" value="gdb -ex run --args" if="$(arg debug)"/>
+  <arg name="launch_prefix" value="" unless="$(arg debug)"/>
+
+  <group ns="$(arg robot_namespace)">
+    <!-- Config and weights folder. -->
+    <arg name="trt_ros"          default="$(find trt_ros)/"/>
+
+    <!-- ROS and network parameter files -->
+    <arg name="ros_param_file"             default="$(find trt_ros)/config/rs_all_in_one.yaml"/>
+    <arg name="network_param_file"         default="$(find trt_ros)/config/detection_model_rs.yaml"/>
+
+    <!-- Load parameters -->
+    <rosparam command="load" ns="trt_ros" file="$(arg ros_param_file)"/>
+    <rosparam command="load" ns="trt_ros" file="$(arg network_param_file)"/>
+
+    <!-- Start darknet and ros wrapper -->
+   <node name="trt_ros" pkg="trt_ros" type="detect.py" output="screen" launch-prefix="$(arg launch_prefix)">
+      <param name="robot_name"            value="$(arg robot_namespace)"/>
+    </node>
+  </group>
+  <rosparam ns="$(arg robot_namespace)">
+    trt_ros:
+    # change file for nicolas
+      yolo_trt_model:
+        serialized_file:
+          name: pruned_768_int8_nicolas.engine
+    # remap iamge topics to throttled
+      subscribers:
+        camera_topics:
+          name:
+            - camera_front/color/image_raw_throttle
+            - camera_left/color/image_raw_throttle
+            - camera_right/color/image_raw_throttle
+            - camera_up/color/image_raw_throttle
+            - camera_rear/color/image_raw_throttle
+  </rosparam>
+
+  <!-- Image decomporessor -->
+  <include file="$(find sensor_image_utils)/launch/rs_compressed_to_raw.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="camera_name" value="camera_front"/>
+    <arg name="throttle" value="true"/>
+    <arg name="image_in" value="image_raw"/>
+    <arg name="image_out" value="image_raw"/>
+  </include>
+
+  <include file="$(find sensor_image_utils)/launch/rs_compressed_to_raw.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="camera_name" value="camera_left"/>
+    <arg name="throttle" value="true"/>
+    <arg name="image_in" value="image_raw"/>
+    <arg name="image_out" value="image_raw"/>
+  </include>
+
+  <include file="$(find sensor_image_utils)/launch/rs_compressed_to_raw.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="camera_name" value="camera_right"/>
+    <arg name="throttle" value="true"/>
+    <arg name="image_in" value="image_raw"/>
+    <arg name="image_out" value="image_raw"/>
+  </include>
+
+  <!-- color filter - automatically launched with the detector -->
+  <include file="$(find artifact_detection_filters)/launch/artifact_detection_filters.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="use_color_filter" value="$(arg use_color_filter)"/>
+  </include>
+
+</launch>

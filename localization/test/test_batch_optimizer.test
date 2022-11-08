@@ -1,0 +1,5 @@
+<launch>
+  <test test-name="test_batch_optimizer"
+        pkg="artifact_localization"
+        type="test_batch_optimizer"/>
+</launch>

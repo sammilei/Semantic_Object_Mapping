@@ -1,0 +1,15 @@
+rgb:
+  image_topic: color/image_decompress
+  info_topic: color/camera_info
+  detection_topic: detected_object
+  frame: camera_color_optical_frame
+depth: 
+  image_topic: aligned_depth_to_color/image_decompress
+  info_topic: aligned_depth_to_color/camera_info
+thermal:
+  image_topic: image_decompress
+  info_topic: camera_info
+  detection_topic: thermal/detected_object
+  frame: camera_optical_frame
+throttle_suffix: _throttle
+velodyne_topic: velodyne_points

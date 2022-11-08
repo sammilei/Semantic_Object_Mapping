@@ -1,0 +1,24 @@
+<launch>
+  <arg name="robot_namespace" default="robot"/>
+
+  <group ns="$(arg robot_namespace)">
+    <node name="bt_append_key"
+          pkg="artifact_detection_rf"
+          type="append_key.py">
+      <remap from="~input" to="bt_rssi"/>
+      <remap from="~output" to="bt_rssi/keyed_value"/>
+    </node>
+    <node name="wifi_append_key"
+          pkg="artifact_detection_rf"
+          type="append_key.py">
+      <remap from="~input" to="wifi_rssi"/>
+      <remap from="~output" to="wifi_rssi/keyed_value"/>
+    </node>
+    <node name="co2_append_key"
+          pkg="artifact_detection_rf"
+          type="append_key.py">
+      <remap from="~input" to="co2"/>
+      <remap from="~output" to="co2/keyed_value"/>
+    </node>
+  </group>
+</launch>

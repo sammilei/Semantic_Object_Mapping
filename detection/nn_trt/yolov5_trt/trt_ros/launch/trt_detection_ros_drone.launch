@@ -1,0 +1,16 @@
+<launch>
+  <arg name="robot_namespace" default="rollo"/>
+  <arg name="use_color_filter" default="true"/>
+
+  <!-- Realsense -->
+  <include file="$(dirname)/trt_detection_rs.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+  </include>
+
+  <!-- color filter - automatically launched with the detector -->
+  <include file="$(find artifact_detection_filters)/launch/artifact_detection_filters.launch">
+    <arg name="robot_namespace" value="$(arg robot_namespace)"/>
+    <arg name="use_color_filter" value="$(arg use_color_filter)"/>
+  </include>
+
+</launch>

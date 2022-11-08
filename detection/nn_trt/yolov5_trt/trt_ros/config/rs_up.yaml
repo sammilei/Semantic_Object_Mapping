@@ -1,0 +1,20 @@
+subscribers:
+
+  camera_topics:
+    name: 
+      - camera_up/color/image_raw
+    queue_size: 5
+
+publishers:
+
+  detection_image:
+    topic: detection_image #/compressed
+    queue_size: 1
+    latch: true
+    resize_scale: 0.25
+    enable: true
+
+  detected_object:
+    topic: detected_object_raw #subT added
+    queue_size: 20
+    latch: true

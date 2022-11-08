@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>artifact_localization</name>
+  <version>0.0.0</version>
+  <description>The artifact_localization package</description>
+
+  <maintainer email="ed@todo.todo">ed</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>apriltags2_ros</depend>
+  <depend>artifact_detection_rf</depend>
+  <depend>darknet_ros_msgs</depend>
+  <depend>artifact_detection_evaluation</depend>
+  <depend>eigen_conversions</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>image_geometry</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+  <depend>tf_conversions</depend>
+  <depend>visualization_msgs</depend>
+  <depend>vision_msgs</depend>
+  <depend>pcl_ros</depend>
+  <depend>artifact_msgs</depend>
+
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+
+  <export>
+  </export>
+</package>

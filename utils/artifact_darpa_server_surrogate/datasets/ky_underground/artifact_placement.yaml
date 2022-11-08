@@ -1,0 +1,72 @@
+# Instructions
+# Set up artifacts and add their locations and categories on new rows
+# e.g. a backpack at marker 0 is written '0: Backpack'
+# Labels are case sensitive to match DARPA conventions
+# Choose from [Backpack, Fire Extinguisher, Cell Phone, Survivor, Drill] with '_n' as a suffix
+# This allows unique identification of them
+# e.g. 1: Backpack_2
+1: Survivor_1
+101: Backpack_101
+109: Fire Extinguisher_109
+110: Cube_110
+111: Survivor_111
+114: Gas_114
+115: Rope_115
+116: Backpack_116
+118: Cell Phone_118
+119: Rope_119
+120: Backpack_120
+121: Drill_121
+122: Gas_122
+123: Backpack_123
+124: Rope_124
+127: Backpack_127
+131: Cell Phone_131
+132: Backpack_132
+133: Fire Extinguisher_133
+134: Helmet_134
+135: Drill_135
+136: Survivor_136
+140: Drill_140
+150: Fire Extinguisher_150
+152: Vent_152
+154: Drill_154
+155: Cell Phone_155
+156: Fire Extinguisher_156
+157: Cube_157
+158: Fire Extinguisher_158
+159: Backpack_159
+160: Survivor_160
+162: Rope_162
+164: Cube_164
+165: Cell Phone_165
+166: Fire Extinguisher_166
+167: Drill_167
+168: Survivor_168
+169: Backpack_169
+172: Backpack_172
+173: Helmet_173
+174: Cell Phone_174
+175: Drill_175
+176: Fire Extinguisher_176
+179: Gas_179
+180: Drill_180
+181: Survivor_181
+183: Helmet_183
+201: Helmet_201
+202: Backpack_202
+203: Fire Extinguisher_203
+204: Backpack_204
+205: Rope_205
+206: Rope_206
+207: Cell Phone_207
+209: Drill_209
+210: Cube_210
+213: Vent_213
+214: Fire Extinguisher_214
+218: Backpack_218
+219: Rope_219
+221: Backpack_221
+223: Cell Phone_223
+227: Backpack_227
+230: Vent_230

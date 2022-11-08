@@ -1,0 +1,50 @@
+subscribers:
+
+  camera_reading:
+    topic: camera_left/color/image_raw
+    queue_size: 1
+
+  depth_reading:
+    topic: camera_left/aligned_depth_to_color/image_raw #subT added
+    queue_size: 1
+
+actions:
+
+  camera_reading:
+    name: check_for_objects
+
+publishers:
+
+  object_detector:
+    topic: camera_left/found_object
+    queue_size: 1
+    latch: false
+
+  bounding_boxes:
+    topic: camera_left/bounding_boxes
+    queue_size: 1
+    latch: false
+
+  detection_image:
+    topic: camera_left/detection_image
+    queue_size: 1
+    latch: true
+  
+  detection_depth:
+    topic: camera_left/detection_depth
+    queue_size: 1
+    latch: true
+
+  detected_object:
+    topic: detected_object_raw #subT added
+    queue_size: 10
+    latch: true
+
+image_view:
+
+  enable_opencv: false
+  wait_key_delay: 1
+  enable_console_output: false
+
+subdiv_c: 1
+subdiv_r: 1

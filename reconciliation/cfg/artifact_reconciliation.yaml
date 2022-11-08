@@ -1,0 +1,7 @@
+association_radius: 5 # [m]
+hotspot_prefix: 'PhoneArtifact'
+netvlad_desc_dim: 32
+netvlad_threshold: 0.5
+netvlad_association_radius: 5 # [m]
+analyse_results: False
+results_file: '/data/ros/scorability_evaluation/base/base_reconciliation.csv'

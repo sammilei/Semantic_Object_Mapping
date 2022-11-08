@@ -1,0 +1,18 @@
+# Instructions
+# This contains the ground truth measurements based on the original survey of the Arroyo Parking Structure on 10/8/19
+# 100 is a test case to validate the transformation for a known dummy point
+
+# Data here in [X,Y,Z] format
+# in gt frame
+
+1floor: [6.37, 21, -0.67]
+2rock: [8.58, 33.12, -0.96]
+3ledge: [19.82, 49.13, -1]
+4floor: [18.22, 57.3, -1.6]
+6floor: [25.49, 68.84, -3.2]
+7rock: [31.22, 85.21, -3.6]
+9floor: [30.17, 102.77, -3.9]
+10floor: [41.28, 131.55, -7]
+9floor: [50.85, 137.7, -8]
+10floor: [46.8, 155.6, -8]
+11rock: [59.84, 153.56, 0]

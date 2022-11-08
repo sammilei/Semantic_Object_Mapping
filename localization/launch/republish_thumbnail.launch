@@ -1,0 +1,9 @@
+<launch>
+  <arg name="robot_namespace" default="robot"/>
+
+  <group ns="$(arg robot_namespace)">
+    <node name="republish_thumbnail" pkg="artifact_localization" type="republish_thumbnail.py" output="screen">
+    </node>
+  </group>
+
+</launch>

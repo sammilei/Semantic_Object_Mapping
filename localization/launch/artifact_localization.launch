@@ -1,0 +1,60 @@
+<launch>
+  <arg name="robot_namespace" default="robot"/>
+  <arg name="debug" default="false"/>
+  <arg name="launch_prefix" value="gdb -ex run --args" if="$(arg debug)"/>
+  <arg name="launch_prefix" value="" unless="$(arg debug)"/>
+
+  <arg name="hovermap_robots" value="spot3 spot4"/>
+  <arg name="drone_robots" value="drone1"/>
+  <arg name="ouster_robots" value="drone1"/>
+
+  <group ns="$(arg robot_namespace)">
+    <node name="artifact_localization" pkg="artifact_localization" type="artifact_localization_node" output="screen" launch-prefix="$(arg launch_prefix)" respawn="true">
+      <rosparam file="$(find artifact_localization)/cfg/artifact_localization.yaml" subst_value="true" />
+      <rosparam file="$(find artifact_localization)/cfg/co2_detection.yaml" />
+      <rosparam file="$(find artifact_localization)/cfg/msl_raptor_params.yaml" />
+      <rosparam if="$(eval robot_namespace in hovermap_robots)">
+        lidar:
+          scan_topic: hvm/lidar/sweep
+      </rosparam>
+      <rosparam if="$(eval robot_namespace in drone_robots)">
+        rgb:
+          info_topic: color/camera_info
+      </rosparam>
+      <rosparam if="$(eval robot_namespace in ouster_robots)" subst_value="true">
+        lidar:
+          scan_topic: history_cloud_transform
+        frames:
+          base_link_frame: $(arg robot_namespace)/base_link
+          map_frame: odom
+          odom_frame: odom
+      </rosparam>
+    </node>
+
+    <node pkg="artifact_localization"
+          type="artifact_visualizer.py"
+          name="artifact_graph_visualization" >
+      <remap from="~artifact" to="artifact/update"/>
+      <remap from="~markers" to="artifact/update/markers"/>
+    </node>
+
+    <!-- Extra cameras for specific robots -->
+    <rosparam if="$(eval robot_namespace in ['husky1'])">
+      artifact_localization:
+        rgb:
+          cameras:
+          - 'camera_front'
+          - 'camera_right'
+          - 'camera_left'
+          - 'camera_rear'
+          - 'camera_up'
+        depth:
+          cameras:
+          - 'camera_front'
+          - 'camera_right'
+          - 'camera_left'
+          - 'camera_rear'
+          - 'camera_up'
+    </rosparam>
+  </group>
+</launch>

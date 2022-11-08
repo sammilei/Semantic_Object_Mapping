@@ -1,0 +1,4 @@
+   0 backpack
+   1 survivor
+   2 helmet
+   3 rope

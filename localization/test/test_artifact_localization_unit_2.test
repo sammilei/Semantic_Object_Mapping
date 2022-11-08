@@ -1,0 +1,26 @@
+<launch>
+  <arg name="robot_namespace" default="husky1"/>
+  <arg name="test_node_start_delay" default="1.0" />  
+
+  <group ns="$(arg robot_namespace)">
+    <!-- Fake CameraInfo from .bagy file -->
+    <node pkg="rostopic" type="rostopic" name="camera_info_pub"
+          args="pub -f $(find artifact_localization)/test/camera_info.bagy /husky1/camera_front/camera_info sensor_msgs/CameraInfo" output="screen"/>
+
+    <!-- Static identity transforms between base_link, lidar & camera frames -->
+    <node pkg="tf" type="static_transform_publisher" name="" args="0 0 0 0 0 0 1 /husky1/map /husky1/base_link 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="" args="0 0 0 0 0 0 1 /husky1/base_link /husky1/camera_front/camera_color_optical_frame 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="" args="0 0 0 0 0 0 1 /husky1/base_link /husky1/velodyne 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="" args="0 0 0 0 0 0 1 /husky1/velodyne /husky1/camera_front/camera_color_optical_frame 100"/>
+
+    <!-- Run tests -->
+    <test test-name="test_artifact_localization_unit_2"
+          pkg="artifact_localization"
+          type="test_artifact_localization_unit_2"
+          launch-prefix="bash -c 'sleep $(arg test_node_start_delay); $0 $@' ">
+        <rosparam file="$(find artifact_localization)/cfg/artifact_localization.yaml" subst_value="true" />
+        <rosparam file="$(find artifact_localization)/cfg/co2_detection.yaml" />
+        <rosparam file="$(find artifact_localization)/cfg/msl_raptor_params.yaml" />
+    </test>
+   </group>
+</launch>

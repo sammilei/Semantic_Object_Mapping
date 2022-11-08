@@ -1,0 +1,45 @@
+backpack:
+  height: 0.43
+  width: 0.33
+  depth: 0.25
+survivor: # be careful about using this, it depends on observation position
+  height: 1.0
+  width: 1.1
+  depth: 0.5
+vent:
+  height: 1.0
+  width: 1.0 # Chosen randomly
+  depth: 0.3 # Chosen randomly
+helmet:  # be careful about using this, it depends on observation position
+  height: 0.15
+  width: 0.25
+  depth: 0.20
+rope:
+  height: 0.15
+  width: 0.50
+  depth: 0.30
+drill:
+  height: 0.28
+  width: 0.24
+  depth: 0.1 # Chosen randomly
+fire_extinguisher:
+  height: 0.41
+  width: 0.12
+  depth: 0.12 # Chosen randomly
+cube:
+  height: 0.2
+  width: 0.2
+  depth: 0.2
+
+# height:
+#   backpack: 0.43
+#   survivor: 1.0
+#   vent: 0.61
+
+# Actual dimensions
+#         W         H         D       Max
+# bp      0.30      0.40      0.30    0.40
+# cp      0.08      0.16      0.02    0.16
+# fe      0.12      0.4       0.12    0.40
+# dr      0.08      0.23      0.20    0.23
+# ma      0.50      1.00      1.10    1.10

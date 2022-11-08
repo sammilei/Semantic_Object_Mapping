@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_namespace" default="spot1"/>
+  <arg name="use_color_filter" default="true"/>
+  <group ns="$(arg robot_namespace)">
+    <!-- Spawn tilt monitor node -->
+    <node pkg="artifact_detection_filters" type="color_filter.py" name="color_filter" output="screen">
+      <param name="robot_name" value="$(arg robot_namespace)" />
+      <param name="use_color_filter" value="$(arg use_color_filter)" />
+      <param name="config_file" value="$(find artifact_detection_filters)/config/artifact_detection_filters_config.yaml" />
+    </node>
+  </group>
+</launch>

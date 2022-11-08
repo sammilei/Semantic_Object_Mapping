@@ -1,0 +1,24 @@
+
+# Options for task
+# 0: Generate gt.json using total station measurements
+# 1: Generate post-test summary report
+task: 0
+#datasets_path: /home/costar/Projects/base_station_ws/src/base_station_core/artifact_darpa_server_surrogate/datasets/subway/
+datasets_path: /home/dpastorm/Projects/base_station_ws/src/base_station_core/artifact_darpa_server_surrogate/datasets/ky_underground/
+#datasets_path: /home/bmorrell/costar_ws/src/base_station_core/artifact_darpa_server_surrogate/datasets/ky_underground/
+
+# Parameters for task 0 only
+surveyed_gt_file: original_surveyed_gt.yaml # {datasets_path}/{surveyed_gt_file}
+
+# Parameters for task 1 only
+date: '12/18/19 Perception Test'
+artifacts_bson_path: /home/costar/Data/12_18/base1_2019-12-18-23-50-00_b301_baseline_t13/database/costar/artifacts.bson
+scoring_distance_threshold: 5.0 # [m]
+association_distance_threshold: 10.0 # should be less than half the smallest distance between artifacts
+robots:
+  # robot_name: path/to/bagfiles/with/lamp
+  husky2: /home/costar/Data/12_18/husky2_2019-12-18-23-50-00_b301_baseline_t13/rosbag
+
+# Parameters for both task 0 and 1
+artifact_placement_file: artifact_placement.yaml  # {datasets_path}/{artifact_placement_file}
+gt_json_file: gt.json  # {datasets_path}/{gt_json_file}

@@ -1,0 +1,3 @@
+th_d_ts_gt: 33.52.06 # [deg.min.sec] HA of datum marker d in ts_gt as viewed from ts
+trans: [-3.552, 11.758, 0.738] # [N, E, Z] position of w in gt as viewed from ts (using a resection from permanent reflective markers)
+th_d_ts_w: 251.31.54 # [deg.min.sec] HA of datum marker d in ts_w as viewed from ts

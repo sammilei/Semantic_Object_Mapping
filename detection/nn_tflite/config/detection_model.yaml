@@ -1,0 +1,8 @@
+detection_model:
+  cpu_tflite_model:
+    file_name: mobiledet_subt.tflite
+  edgetpu_tflite_model:
+    file_name: mobiledet_subt_edgetpu.tflite
+  classes_names:
+    file_name: subt_labels.txt
+  threshold: 0.2
