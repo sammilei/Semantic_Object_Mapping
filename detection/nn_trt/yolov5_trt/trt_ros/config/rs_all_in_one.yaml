@@ -20,5 +20,5 @@ publishers:
 
   detected_object:
     topic: detected_object_raw #subT added
-    queue_size: 20
+    queue_size: 10
     latch: true

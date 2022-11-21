@@ -1,0 +1,1 @@
+network_config/stair_detection.engine filter=lfs diff=lfs merge=lfs -text

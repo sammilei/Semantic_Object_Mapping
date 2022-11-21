@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
+from re import I
 
 print(" ======= for debugging =======")
 import cv_bridge
@@ -32,13 +33,13 @@ from model import *
 # Subt imports
 from darknet_ros_msgs.msg import FullDetection, Object, BoundingBox, ObjectCount
 
-
 # Detector manager class for YOLO
 class Detector_manager():
     def __init__(self):
         # Load weights parameter
         namespace = rospy.get_name()
         engine_name = rospy.get_param(namespace + "/yolo_trt_model/serialized_file/name")
+        # self.engine_path = os.path.join(package_path, 'network_config', engine_name)
         self.engine_path = os.path.join(package_path, 'network_config', engine_name)
         rospy.loginfo("Found weights, loading %s", self.engine_path)
 
@@ -47,7 +48,7 @@ class Detector_manager():
 
         # get the robot name
         self.robot_name = rospy.get_param('~robot_name')
-
+        rospy.loginfo("Launched node %s",self.robot_name)
         # Load image parameter and confidence threshold
         self.class_labels = rospy.get_param(namespace + "/yolo_trt_model/detection_classes/names")
         conf_thresh_list = rospy.get_param(namespace + "/yolo_trt_model/detect_thresh/value")
@@ -63,6 +64,7 @@ class Detector_manager():
 
         # Load subscribers topics
         self.image_topics = rospy.get_param(namespace + '/subscribers/camera_topics/name')
+        rospy.loginfo("{}: {}".format(key, val))
         self.camera_queue_size = rospy.get_param(namespace + "/subscribers/camera_topics/queue_size", 20)
 
         # Load publishers topics
@@ -70,7 +72,7 @@ class Detector_manager():
         self.detection_image_queue_size = rospy.get_param(namespace + "/publishers/detection_image/queue_size", 1)
         self.detection_image_latch = rospy.get_param(namespace + "/publishers/detection_image/latch", True) 
         self.detected_object_topic_name = rospy.get_param(namespace + "/publishers/detected_object/topic", "detected_object_raw")
-        self.detected_object_queue_size = rospy.get_param(namespace + "/publishers/detected_object/queue_size", 20)
+        self.detected_object_queue_size = rospy.get_param(namespace + "/publishers/detected_object/queue_size", 10)
         self.detected_object_latch = rospy.get_param(namespace + "/publishers/detected_object/latch", True) 
 
         # Load net
@@ -157,9 +159,10 @@ class Detector_manager():
         # Spin
         rospy.spin()
 
-
+    
     def frontRgbCallback(self, image_data):
         self.imageFunction(image_data, "camera_front")
+
 
     def rightRgbCallback(self, image_data):
         self.imageFunction(image_data, "camera_right")
@@ -178,56 +181,85 @@ class Detector_manager():
 
     def imageFunction(self, image_data, camera_name_image):
         # Convert the image to OpenCV
+        # cv_image = self.bridge.imgmsg_to_cv2(image_data, 'bgr8')#desired_encoding="passthrough")
+        # cv_image = cv2.resize(cv_image, (320, 180), interpolation=cv2.INTER_LINEAR)
+        # image_data = self.bridge.cv2_to_imgmsg(cv_image,encoding="passthrough")
+        # print("Image_data:",image_data.height)
         if len(self.batch_ros_img) < self.batch_size:
             input_img, self.scale, self.new_h, self.new_w = self.preProcess(image_data)
-
             self.offset_w = (self.network_img_width - self.new_w)//2
             self.offset_h = (self.network_img_height - self.new_h)//2
+            #image_data = self.bridge.cv2_to_imgmsg(input_img)
+            # print("offset",self.offset_h)
 
             self.batch_ros_img.append(image_data)
             self.batch_processed.append(input_img)
             self.batch_header.append(image_data.header)
             self.batch_camera_name.append(camera_name_image)
+
         elif not self.detection_lock:
             self.detection_lock = True
-            #print ("batch is full as {}, detect now".format(self.batch_size))
+            # print ("batch is full as {}, detect now".format(self.batch_size))
             # Get detections from network
             batch = self.batch_processed[:self.batch_size]
             try:
                 batch = np.concatenate(batch, 0)
                 detections = self.model.run(batch)
-
+                # detections = [self.model.run(batch)]
                 # Parse detections
+                
                 for i, detection in enumerate(detections):
+                    i = 0
+                    print("detection", detection)
                     detection_results = []
                     camera_name = self.batch_camera_name[i]
+
+                    # camera_name = self.batch_camera_name[i]
                     if len(detection) > 0:
                         for det in detection:
+                            # print("det",det[0])
                             # Get xmin, ymin, xmax, ymax, confidence and class
+                            #dpg_changes
+                            # if det.size != 0:
+                            #     det = det[0]
+                            # else:
+                            #     det = np.array([0,0,0,0,0,0])
                             xmin_orig, xmax_orig, ymin_orig, ymax_orig, conf, det_class = self.processDetectionResult(det)
-
+                            # xmin_orig, xmax_orig, ymin_orig, ymax_orig, conf, det_class = self.processDetectionResult(det)
+                            print("conf",conf)
+                            print("det:",xmin_orig,ymin_orig,xmax_orig,ymax_orig,self.batch_ros_img[0].height,self.batch_ros_img[0].width)
+                            # xmin_orig, xmax_orig, ymin_orig, ymax_orig = self.validBbox(xmin_orig, xmax_orig, ymin_orig,
+                            #                                                             ymax_orig,
+                            #                                                             self.batch_ros_img[i].height,
+                            #                                                             self.batch_ros_img[i].width)
                             xmin_orig, xmax_orig, ymin_orig, ymax_orig = self.validBbox(xmin_orig, xmax_orig, ymin_orig,
                                                                                         ymax_orig,
                                                                                         self.batch_ros_img[i].height,
                                                                                         self.batch_ros_img[i].width)
-
                             # Populate darknet message
+                            print("confidence:",self.conf_thresh_artifacts[self.class_labels[int(det_class)]])
                             if conf > self.conf_thresh_artifacts[self.class_labels[int(det_class)]]:
+                                # detected_obj = self.publishDetection(self.batch_ros_img[i], xmin_orig, xmax_orig, ymin_orig,
+                                #                                     ymax_orig, conf, det_class, i, camera_name)
                                 detected_obj = self.publishDetection(self.batch_ros_img[i], xmin_orig, xmax_orig, ymin_orig,
                                                                     ymax_orig, conf, det_class, i, camera_name)
-
                                 # Append in overall detection message
                                 detection_results.append(detected_obj)
-
+                    # print("lengthofdetection", detection_results)
                     # show detection rate using a counter
                     detection_count_debug = ObjectCount()
+                    #dpg_changes
+                    # detection_count_debug.header = self.batch_header[i]
                     detection_count_debug.header = self.batch_header[i]
                     detection_count_debug.count = len(detection_results)
                     self.detection_count_debug_pub.publish(detection_count_debug)
 
                     # Visualize images with detection only
                     if (self.to_publish_detection_image and len(detection_results) > 0):
+                        #dpg_changes
+                        #self.publishDetectionImage(detection_results, self.batch_ros_img[i], camera_name)
                         self.publishDetectionImage(detection_results, self.batch_ros_img[i], camera_name)
+                        # print("camera:", detection_results,camera_name)
             except Exception as e:
                 print("batch lock conflict: {}".format(e))
 
@@ -255,13 +287,17 @@ class Detector_manager():
     def preProcess(self, ros_img):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(ros_img, 'rgb8')#desired_encoding="passthrough")
+            
             if ros_img.encoding == 'rgb8': #for raw input, decompressed:rgb8 by default
                 print("this is rgb8 in the if statement")
                 cv_image = cv2.cvtColor(cv_image,cv2.COLOR_BGR2BRG)
+                cv_image = cv2.resize(cv_image, (320, 180), interpolation=cv2.INTER_LINEAR)
             img_in = np.array(Image.fromarray(cv_image))
-
+            print("network_height:",self.network_img_height,self.network_img_width)
+            print("image:",img_in.shape)
+            #resized, scale, (new_h, new_w) = resize_img_no_PIL(img_in, (self.network_img_height, self.network_img_width))
             resized, scale, (new_h, new_w) = resize_img_no_PIL(img_in, (self.network_img_height, self.network_img_width))
-
+            print("scale",scale)
             input_img = np.transpose(resized, (2, 0, 1)).astype(np.float32)  # HWC -> CHW
             input_img = np.expand_dims(input_img, axis=0)/255.0
             input_img = np.array(input_img)
@@ -276,6 +312,7 @@ class Detector_manager():
     def processDetectionResult(self, det):
          # Get xmin, ymin, xmax, ymax, confidence and class
         xmin, ymin, xmax, ymax, conf, det_class = det
+        # xmax, ymax, xmin, ymin, conf, det_class = det
         xmin = int(xmin.item())
         ymin = int(ymin.item())
         xmax = int(xmax.item())
@@ -300,7 +337,8 @@ class Detector_manager():
         detected_obj.box.ymin = ymin_orig
         detected_obj.box.ymax = ymax_orig
         detected_obj.box.yolo_probability = conf
-        detected_obj.box.color_score = -1
+        detected_obj.box.probability = conf
+        # detected_obj.box.color_score = -1
         detected_obj.box.Class = self.class_labels[int(det_class)]
 
         rospy.loginfo("{} detected: {} at {} in bbox: ({}, {} {},{})".format(camera_name, self.class_labels[int(det_class)], str(conf)[:4], xmin_orig, xmax_orig, ymin_orig, ymax_orig))
@@ -316,10 +354,21 @@ class Detector_manager():
 
     def publishDetectionImage(self, bounding_boxes, imgIn, camera_name):
         cv_image = self.bridge.imgmsg_to_cv2(imgIn, "rgb8")
+        # print("Image:", cv_image)
+        # img_path = r'/home/detection.jpg'
+        # img_directory = r'/home'
+        # os.chdir(img_directory)
+        # img_path = 'detection.jpg'
+        # cv2.imwrite(img_path,cv_image)
+        # print(cv2.imread(img_path))
+
         imgOut = cv_image.copy()
+        # cv2.imshow(str(0), cv_image)
+        # cv2.waitKey(1)
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = 0.5
-        thickness = 2
+        thickness = 1
+        print("length of_bounding box",len(bounding_boxes))
         for index in range(len(bounding_boxes)):
             x_p1 = bounding_boxes[index].box.xmin
             y_p1 = bounding_boxes[index].box.ymin
@@ -336,20 +385,30 @@ class Detector_manager():
                 color = np.random.randint(0,255,3)
 
                 self.classes_colors[label] = color
-
+                
+            area = int(x_p1-x_p3) * int(y_p1-y_p3)
+            print("Area", area)
             # Create rectangle
+            # if area > 3000:
             cv2.rectangle(imgOut, (int(x_p1), int(y_p1)), (int(x_p3), int(y_p3)), (int(color[0]),int(color[1]),int(color[2])),thickness)
             text = ('{:s}:{:.0f}%').format(label[:2],confidence*100)
             cv2.putText(imgOut, text, (int(x_p1), int(y_p1+20)), font, fontScale, (255,255,255), thickness ,cv2.LINE_AA)
 
         # Publish visualization image
+        print("imgOut:",imgOut.shape[1], imgOut.shape[0],self.detection_image_rescale)
         imgOut = cv2.resize(imgOut, (int(imgOut.shape[1] * self.detection_image_rescale), int(imgOut.shape[0] * self.detection_image_rescale)), interpolation=cv2.INTER_LINEAR)
         imgOut = cv2.cvtColor(imgOut, cv2.COLOR_BGR2RGB)
+        imgOut = imgOut.copy()
+        # cv2.imshow(str(0), imgOut)
+        # cv2.waitKey(1) 
+        # print("imgOut :",imgOut)
         # image_msg = self.bridge.cv2_to_imgmsg(imgOut, "rgb8")
-        image_msg = self.bridge.cv2_to_imgmsg(imgOut)
-        compressed_image_msg = self.bridge.cv2_to_compressed_imgmsg(imgOut)
-        self.detection_image_pub[camera_name].publish(image_msg)
-        self.detection_image_compressed_pub[camera_name].publish(compressed_image_msg)
+        # image_msg = self.bridge.cv2_to_imgmsg(imgOut,"bgr8")
+        # compressed_image_msg = self.bridge.cv2_to_compressed_imgmsg(imgOut,"bgr8")
+        self.detection_image_pub[camera_name].publish(self.bridge.cv2_to_imgmsg(imgOut,"bgr8"))
+        self.detection_image_compressed_pub[camera_name].publish(self.bridge.cv2_to_compressed_imgmsg(imgOut,"bgr8"))
+        # print("compresssed_message :",self.detection_image_compressed_pub[camera_name].publish(compressed_image_msg))
+        # print("image_msg",self.detection_image_pub[camera_name].publish(image_msg))
 
 
 if __name__=="__main__":

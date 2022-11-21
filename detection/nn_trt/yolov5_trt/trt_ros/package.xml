@@ -4,6 +4,8 @@
   <version>0.1.0</version>
   <description>The YOLOv5 trt ROS wrapper package</description>
 
+  <maintainer email="xlei@jpl.nasa.gov">Xianmei Lei</maintainer>
+
   <license>subt</license>
 
   <depend>darknet_ros_msgs</depend>

@@ -7,13 +7,18 @@ import random
 import sys
 import threading
 import time
+from tkinter import N
 import cv2
 import numpy as np
 import pycuda.autoinit
 import pycuda.driver as cuda
 import tensorrt as trt
+from rospkg import RosPack
+import ctypes
 
 from PIL import Image
+package = RosPack()
+package_path = package.get_path('trt_ros')
 
 # CONF_THRESH = 0.05
 # IOU_THRESHOLD = 0.4
@@ -91,7 +96,12 @@ def resize_img(image, size):
 def resize_img_no_PIL(image, expected_size):
     ih, iw, _ = image.shape
     eh, ew = expected_size
-    scale = min(eh / ih, ew / iw)
+    if ih > eh or iw > ew:
+        scale = 1
+        ih , iw = 608,608
+    else:
+        scale = min(eh / ih, ew / iw)
+    
     nh = int(ih * scale)
     nw = int(iw * scale)
 
@@ -140,13 +150,13 @@ def xywh2xyxy(x):
     return y
 
 
-def non_max_suppression(prediction, conf_thres=0.25, iou_thres=0.45, max_det=300):
+def non_max_suppression(prediction, conf_thres=0.2, iou_thres=0.45, max_det=300):
     """Runs Non-Maximum Suppression (NMS) on inference results
 
     Returns:
          list of detections, on (n,6) tensor per image [xyxy, conf, cls]
     """
-    nc = prediction.shape[2] - 5  # number of classes
+    # nc = prediction.shape[2] - 5  # number of classes
     xc = prediction[..., 4] > conf_thres  # candidates
 
     # Checks
@@ -170,16 +180,18 @@ def non_max_suppression(prediction, conf_thres=0.25, iou_thres=0.45, max_det=300
 
         # Compute conf
         x[:, 5:] *= x[:, 4:5]  # conf = obj_conf * cls_conf
-
+        # print('x',x)
         # Box (center x, center y, width, height) to (x1, y1, x2, y2)
         box = xywh2xyxy(x[:, :4])
-
-        conf = x[:, 5:].max(1, keepdims=True)
+        # conf = x[:, 5:].max(1, keepdims=True)
+        # j = x[:, 5:].argmax(1)
+        conf = x[:, 4:].max(1, keepdims=True)
         j = x[:, 5:].argmax(1)
         x = np.concatenate((box, conf, np.expand_dims(j, 1)), 1)[conf.reshape(-1) > conf_thres]
 
         # Check shape
         n = x.shape[0]  # number of boxes
+        print("n:",n)
         if not n:  # no boxes
             continue
 
@@ -244,7 +256,9 @@ class TRTmodel(object):
     """
     description: A YOLOv5 class that warps TensorRT ops, preprocess and postprocess ops.
     """
-
+    # PLUGIN_LIBRARY = "build/libmyplugins.so"
+    PLUGIN_LIBRARY =  os.path.join(package_path, 'plugins/libmyplugins.so')
+    ctypes.CDLL(PLUGIN_LIBRARY)
     def __init__(self, engine_file_path, iou_thresh, conf_thresh):
         # Create a Context on this device,
         self.profile = False
@@ -278,7 +292,7 @@ class TRTmodel(object):
             bindings.append(int(cuda_mem))
             # Append to the appropriate list.
             if engine.binding_is_input(binding):
-                self.img_size = engine.get_binding_shape(binding)[2:]
+                self.img_size = engine.get_binding_shape(binding)[1:]
                 host_inputs.append(host_mem)
                 cuda_inputs.append(cuda_mem)
 
@@ -326,7 +340,7 @@ class TRTmodel(object):
 
         t0 = time_synchronized()
         # Run inference.
-        context.execute_async_v2(bindings=bindings, stream_handle=stream.handle)
+        context.execute_async(bindings=bindings, stream_handle=stream.handle)
         # Transfer predictions back from the GPU.
         cuda.memcpy_dtoh_async(host_outputs[0], cuda_outputs[0], stream)
         # Synchronize the stream
@@ -337,12 +351,17 @@ class TRTmodel(object):
 
         output = host_outputs[0]
         # output = torch.from_numpy(np.array(output))
-        output = np.array(output)
+        # output = np.array(output)
         # output = output.view(self.batch_size, -1, self.out_size[-1])
-        output = output.reshape(self.batch_size, -1, self.out_size[-1])
+        # output = output.reshape(self.batch_size, -1, self.out_size[-1])
 
         # Do postprocess
-        output = non_max_suppression(output, conf_thres=self.CONF_THRESH, iou_thres=self.IOU_THRESHOLD)
+        for i in range(self.batch_size):
+            output = output[i * 6001: (i + 1) * 6001]
+            num = int(output[0])
+            pred = np.reshape(output[1:], (-1, 6))[:num, :]
+
+            output = non_max_suppression(pred, conf_thres=self.CONF_THRESH, iou_thres=self.IOU_THRESHOLD)
         t2 = time_synchronized()
 
         if self.profile:
@@ -432,10 +451,13 @@ class inferThread(threading.Thread):
 
 if __name__ == "__main__":
     # load custom plugins
+    PLUGIN_LIBRARY =  os.path.join(package_path, 'plugins/libmyplugins.so')
+    ctypes.CDLL(PLUGIN_LIBRARY)
+
     engine_file_path = sys.argv[1]
     image_dir = sys.argv[2]
 
-    categories = ['survivor', 'helmet', 'backpack', 'drill', 'fire_extinguisher', 'rope']
+    categories = ['Stairway']
 
     if os.path.exists('output/'):
         shutil.rmtree('output/')
